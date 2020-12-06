@@ -16,7 +16,12 @@ namespace ddlBot
 
         public void OnGroupMsg(GroupMsgArgs e)
         {
-            
+            if (e.FromGroup != C.workingGroup) return;
+            var ret = Cmds.RunCommand(e.FromQQ, e.Msg);
+            if (ret != null)
+            {
+                e.Reply(ret);
+            }
         }
 
         public void OnFriendRequest(FriendRequestArgs e)
