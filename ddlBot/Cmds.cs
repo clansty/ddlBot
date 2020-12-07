@@ -13,7 +13,8 @@ namespace ddlBot
         {
             try
             {
-                var key = (command.Contains(' ') ? command.ToLower() : command.GetLeft(" ")).ToLower();
+                Console.WriteLine($"{sdr}: {command}");
+                var key = (command.Contains(' ') ? command.GetLeft(" ").ToLower() : command.ToLower());
                 var act = command.GetRight(" ");
                 switch (key)
                 {
@@ -22,6 +23,8 @@ namespace ddlBot
                     case "url":
                     case "ui":
                     {
+                        if (sdr == 0)
+                            return null;
                         var ret = (C.backendUrl + "/api/bot/resetToken")
                             .WithHeader("x-auth", C.botToken)
                             .PostJsonAsync(
@@ -30,8 +33,9 @@ namespace ddlBot
                                     uid = Md5(sdr.ToString())
                                 })
                             .ReceiveJson<JObject>().Result;
+                        Console.WriteLine(ret);
                         if (ret.Value<int>("code") == 200)
-                            return C.frontendUrl + "/#/u/" + ret.Value<string>("newToken");
+                            return "Your WebUI address:\n" + C.frontendUrl + "/#/u/" + ret.Value<string>("token");
                         return "Server Request Error:\n" + ret;
                     }
                     default:
